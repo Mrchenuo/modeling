@@ -1,13 +1,14 @@
 classdef schedule_node < handle
    % schedule_node A class to represent a doubly-linked node.
    % Link multiple schedule_node objects together to create linked lists.
+   % 时间节点（既包括起点，也包括终点）
    properties
       Data
    end
    properties(SetAccess = private)
       Next = schedule_node.empty
       Prev = schedule_node.empty
-      Dest = schedule_node.empty
+      Dest = schedule_node.empty  % 指向航班终点时间节点
    end
    
    methods
@@ -17,7 +18,7 @@ classdef schedule_node < handle
             node.Data = Data;
          end
          
-         if ~isempty(nodeBefore.Next)
+         if ~isempty(Dest)
              node.Dest = Dest;
          end
       end
