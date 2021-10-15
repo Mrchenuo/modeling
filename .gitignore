@@ -1,2 +1,9 @@
 
 *.asv
+*.pth
+*.pkl
+D/.idea/
+D/ans2/data_mining/.idea
+D/ans2/data_mining/saved
+D/ans2/data_mining/saved_model
+*.pyc
