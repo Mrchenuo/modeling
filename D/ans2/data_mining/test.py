@@ -1,4 +1,8 @@
 import argparse
+from lib2to3.pgen2.grammar import op
+
+import numpy as np
+import pandas as pd
 import torch
 from torch import nn
 from tqdm import tqdm
@@ -17,9 +21,8 @@ def main(config):
 
     # setup data_loader instances
     data_loader = getattr(module_data, config['data_loader']['type'])(
-        config['data_loader']['args']['test_data_dir'],
+        config['data_loader']['args']['test_data_path'],
         batch_size=64,
-        image_size=None,
         shuffle=False,
         validation_split=0.0,
         phase='test',
@@ -62,6 +65,26 @@ def main(config):
             # save sample images, or do something with output here
             #
 
+            # computing loss, metrics on test set
+            loss = loss_fn(output, target)
+            batch_size = data.shape[0]
+            total_loss += loss.item() * batch_size
+            for i, metric in enumerate(metric_fns):
+                total_metrics[i] += metric(output, target) * batch_size
+    # print(output_all)
+    # print(target_all)
+    # dif = np.absolute(output_all - target_all)
+    # print(dif)
+
+    # list转dataframe
+    # df = pd.DataFrame(output_all.numpy(), columns=['pIC50'])
+    # # 保存到本地excel
+    # df.to_excel("pIC50.xlsx", index=False)
+    # bg = op.load_workbook(r"D:/GitHub/modeling/D/data/ERα_activity.xlsx")  # 应先将excel文件放入到工作目录下
+    # sheet = bg["test"]
+    # for i in range(1, len(num_list) + 1):
+    #     sheet.cell(i, 1, num_list[i - 1])
+
     n_samples = len(data_loader.sampler)
     log = {'loss': total_loss / n_samples}
     log.update({
@@ -74,7 +97,7 @@ if __name__ == '__main__':
     args = argparse.ArgumentParser(description='detection')
     args.add_argument('-c', '--config', default=None, type=str,
                       help='config file path (default: None)')
-    args.add_argument('-r', '--resume', default=r"saved_model\model_best.pth",
+    args.add_argument('-r', '--resume', default=r"saved/models/Detection/1015_232836\model_best.pth",
                       type=str,
                       help='path to latest checkpoint (default: None)')
     args.add_argument('-d', '--device', default=None, type=str,

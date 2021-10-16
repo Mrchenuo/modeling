@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 
 if __name__ == '__main__':
     # 从硬盘读取数据进入内存
-    train_df = pd.read_excel("../data/train.xlsx", engine='openpyxl', sheet_name='Sheet2')
+    train_df = pd.read_excel("../data/train.xlsx", engine='openpyxl', sheet_name='Sheet1')
     train_df = train_df.iloc[:-2, 1:]  # 最后两行为nan去掉，第一列为名称去掉
     # train_df = train_df.iloc[:, 1:]  # 最后两行为nan去掉，第一列为名称去掉
 
@@ -27,10 +27,11 @@ if __name__ == '__main__':
 
     # 使用随机森林模型进行拟合的过程
     X_train = train_df[features]
+    # X_train = train_df
     y_train = train_df['pIC50']
     feat_labels = X_train.columns
 
-    rf = RandomForestRegressor(n_estimators=1000, max_depth=None)
+    rf = RandomForestRegressor(n_estimators=10000, max_depth=None)
     rf_pipe = Pipeline([('imputer', SimpleImputer(strategy='median')), ('standardize', StandardScaler()), ('rf', rf)])
     rf_pipe.fit(X_train, y_train)
 

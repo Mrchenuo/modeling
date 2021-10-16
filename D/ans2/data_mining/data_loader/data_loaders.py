@@ -20,19 +20,18 @@ class RIDataLoader(BaseDataLoader):
     def __init__(self, data_dir, batch_size, shuffle=True, validation_split=0.0, num_workers=1,
                  phase="train"):
         self.data_dir = data_dir
-        normalize = torchvision.transforms.Normalize([0.485, 0.456, 0.406],
-                                                     [0.229, 0.224, 0.225])
-        dataset_list = []
+
         if phase == 'train':
             # 加载数据
             train_df = pd.read_excel(data_dir, engine='openpyxl', sheet_name='Sheet1')
-            train_df = train_df.iloc[:-2, 1:]  # 最后两行为nan去掉，第一列为名称去掉
+            train_df = train_df.iloc[:-402, 1:]  # 最后两行为nan去掉，第一列为名称去掉
             Y = train_df.iloc[:, -1].values
             var_top20 = np.load(r'D:\GitHub\modeling\D\feature_extraction/variable_top20.npy')
             var = ['MDEC-23', 'minsssN', 'LipoaffinityIndex', 'maxHsOH', 'maxssO', 'C1SP2',
                    'minHsOH', 'BCUTc-1l', 'minsOH', 'minHBint5', 'MLFER_A', 'nHBAcc', 'VC-5',
                    'MDEO-12', 'ndssC', 'TopoPSA', 'ATSc3', 'SHBint10', 'MDEC-33', 'XLogP']
             var_top20 = pd.Index(var)
+            # var_top20 = pd.Index(var_top20)
             train_df = train_df[var_top20]
             X = train_df.values
 
@@ -46,11 +45,15 @@ class RIDataLoader(BaseDataLoader):
 
         elif phase == 'test':
             # 加载数据
-            train_df = pd.read_excel(data_dir, engine='openpyxl', sheet_name='Sheet1')
-            train_df = train_df.iloc[:-2, 1:]  # 最后两行为nan去掉，第一列为名称去掉
+            train_df = pd.read_excel(data_dir, engine='openpyxl', sheet_name='Sheet2')
+            train_df = train_df.iloc[:, 1:]  # 最后两行为nan去掉，第一列为名称去掉
             Y = train_df.iloc[:, -1].values
-            var_top20 = pd.np.load(r'D:\GitHub\modeling\D\feature_extraction/variable_top20.npy')
-            var_top20 = pd.Index(var_top20)
+            var_top20 = np.load(r'D:\GitHub\modeling\D\feature_extraction/variable_top20.npy')
+            # var_top20 = pd.Index(var_top20)
+            var = ['MDEC-23', 'minsssN', 'LipoaffinityIndex', 'maxHsOH', 'maxssO', 'C1SP2',
+                   'minHsOH', 'BCUTc-1l', 'minsOH', 'minHBint5', 'MLFER_A', 'nHBAcc', 'VC-5',
+                   'MDEO-12', 'ndssC', 'TopoPSA', 'ATSc3', 'SHBint10', 'MDEC-33', 'XLogP']
+            var_top20 = pd.Index(var)
             train_df = train_df[var_top20]
             X = train_df.values
 
