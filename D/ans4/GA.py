@@ -3,8 +3,11 @@ import numpy as np
 import pandas as pd
 import random
 import xlsxwriter
+from load_model import ans3_pred
+from load_model import ans2_pred
 
 population_size = 1974  # 种群大小
+# population_size = 38  # 种群大小
 chromosome_size = 729  # 染色体长度
 generation_size = 6  # 最大迭代次数
 cross_rate = 0.7  # 交叉概率
@@ -12,7 +15,8 @@ mutate_rate = 0.1  # 变异概率
 best_number = 100  # 保留的最佳个体的数量(best_number需要大于1)
 
 # 打开文件
-xls = pd.read_excel("Molecular_Descriptor.xlsx", engine='openpyxl', sheet_name='training')
+# xls = pd.read_excel(r"D:\GitHub\modeling\D\ans2\Molecular_Descriptor_t.xlsx", engine='openpyxl', sheet_name='training')
+xls = pd.read_excel(r"D:\GitHub\modeling\D\ans3\Molecular_Descriptor.xlsx", engine='openpyxl', sheet_name='training')
 xls = xls.iloc[:, 1:].values
 
 # 向量矩阵初始化
@@ -34,7 +38,8 @@ for i in range(population_size):
 # 迭代
 for G in range(generation_size):
     # TODO:返回二三问预测值
-    
+    pred_list_2 = ans2_pred(population)
+    pred_list_3 = ans3_pred(population)
     # 适应度计算
     for i in range(population_size):
         fitness_value[i] = random.uniform(0, 1)
