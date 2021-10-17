@@ -1,0 +1,17 @@
+    # 适应度计算
+    count = 0
+    for i in range(population_size):
+        for j in range(5):
+            if pred_list_3[j, i] == 0:
+                if j == 1 | j == 2 | j == 4:
+                    count = count + 1
+            elif j == 0 | j == 3:
+                count = count + 1
+    if count > admet:
+        fitness_value[i] = pred_list_2[i]
+    else:
+        fitness_value[i] = 0
+
+
+admet = 3  # 对ADMET性质的要求
+

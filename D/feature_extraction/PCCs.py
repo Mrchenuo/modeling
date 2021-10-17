@@ -8,8 +8,8 @@ from sklearn.preprocessing import StandardScaler
 
 if __name__ == '__main__':
     # 从硬盘读取数据进入内存
-    train_df = pd.read_excel("../data/train.xlsx", engine='openpyxl', sheet_name='Sheet1')
-    train_df = train_df.iloc[:-2, 1:]  # 最后两行为nan去掉，第一列为名称去掉
+    train_df = pd.read_excel("../data/train2.xlsx", engine='openpyxl', sheet_name='training')
+    train_df = train_df.iloc[:, 1:]  # 最后两行为nan去掉，第一列为名称去掉
     # train_df = train_df.iloc[:, 1:]  # 最后两行为nan去掉，第一列为名称去掉
 
     # # 根据皮尔逊相关系数选择与要预测的属性列SalePrice相关性最高的10个属性
@@ -22,6 +22,7 @@ if __name__ == '__main__':
     # 先用皮尔逊系数粗略的选择出相关性系数的绝对值大于0.3的属性列，这样不需要训练过多不重要的属性列
     # 可以这么做而且不会破坏实验的控制变量原则，因为根据皮尔逊相关系数选择出的重要性排名前10的属性列
     # 它们与要预测的属性列的皮尔逊相关系数均大于0.3，可以当成步骤1中也进行了同样的取相关系数为0.3的操作
+    corr = train_df.corr()[train_df.corr()['pIC50'].abs() > .3]['pIC50']
     features = train_df.corr().columns[train_df.corr()['pIC50'].abs() > .3]
     features = features.drop('pIC50')
 
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     y_train = train_df['pIC50']
     feat_labels = X_train.columns
 
-    rf = RandomForestRegressor(n_estimators=10000, max_depth=None)
+    rf = RandomForestRegressor(n_estimators=1000, max_depth=None)
     rf_pipe = Pipeline([('imputer', SimpleImputer(strategy='median')), ('standardize', StandardScaler()), ('rf', rf)])
     rf_pipe.fit(X_train, y_train)
 
@@ -41,7 +42,7 @@ if __name__ == '__main__':
 
     # np.argsort()返回待排序集合从下到大的索引值，[::-1]实现倒序，即最终imp_result内保存的是从大到小的索引值
     imp_result = np.argsort(importance)[::-1][:20]
-
+    print(imp_result)
     # 按重要性从高到低输出属性列名和其重要性
     for i in range(len(imp_result)):
         print("%2d. %-*s %f" % (i + 1, 30, feat_labels[imp_result[i]], importance[imp_result[i]]))
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     # 对属性列，按属性重要性从高到低进行排序
     feat_labels = [feat_labels[i] for i in imp_result]
     a = np.array(feat_labels)
-    np.save('variable_top20', a)  # 保存为.npy格式
+    # np.save('variable_top20', a)  # 保存为.npy格式
     # 绘制特征重要性图像
     plt.title('Feature Importance')
     plt.bar(range(len(imp_result)), importance[imp_result], color='lightblue', align='center')

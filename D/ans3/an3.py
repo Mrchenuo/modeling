@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import xgboost as xgb
 from xgboost import XGBClassifier
-
+from sklearn.preprocessing import StandardScaler
 
 def modelfit(alg, x_train, y_train, x_test, y_test, useTrainCV=True, cv_folds=5, early_stopping_rounds=50):
     if useTrainCV:
@@ -36,8 +36,6 @@ def modelfit(alg, x_train, y_train, x_test, y_test, useTrainCV=True, cv_folds=5,
 
 
 # 1 加载数据
-from sklearn.preprocessing import StandardScaler
-
 X_train_df = pd.read_excel(r"D:\GitHub\modeling\D\ans3\Molecular_Descriptor.xlsx", engine='openpyxl',
                            sheet_name='training')
 X = X_train_df.iloc[:, 1:].values  # 去掉第一列
